@@ -6,7 +6,7 @@ import {
     Navigate,
     Link,
     useParams,
-} from "react-router-dom"; // Added useParams
+} from "react-router-dom";
 import BlogEditor from "./components/BlogEditor";
 import BlogList from "./components/BlogList";
 import Navbar from "./components/Navbar";
@@ -16,6 +16,7 @@ import { getCurrentUser } from "./services/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import BlogView from "./components/BlogView";
 
 // A wrapper for protected routes
 const ProtectedRoute = ({ children, currentUser }) => {
@@ -27,30 +28,41 @@ const ProtectedRoute = ({ children, currentUser }) => {
 };
 
 // Component to display a single blog (read-only view)
+// Update the BlogViewPage component
 const BlogViewPage = () => {
-    // This is a simplified version. You'd fetch the blog by ID here.
-    // For now, we'll use BlogEditor. A proper BlogView component would be better.
-    const { id } = useParams(); // useParams was missing
-    const [currentUserForView, setCurrentUserForView] = useState(null); // Minimal user context for viewing
+    const { id } = useParams();
+    const [currentUserForView, setCurrentUserForView] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            // Fetch minimal user data if needed for conditional UI elements in BlogEditor
             getCurrentUser()
                 .then((response) => setCurrentUserForView(response.data))
                 .catch(() => {
                     /* Don't necessarily clear token, just means no logged-in user */
+                })
+                .finally(() => {
+                    setLoading(false);
                 });
+        } else {
+            setLoading(false);
         }
     }, []);
 
-    // Pass the blog ID to the editor component.
-    // The BlogEditor itself fetches the blog data based on this ID.
-    // If you want a truly read-only view, BlogEditor would need a 'readOnly' prop
-    // or you'd create a separate BlogView component.
+    if (loading) {
+        return (
+            <div className="loading">
+                <div className="loading-spinner"></div>
+                <span>Loading blog content...</span>
+            </div>
+        );
+    }
+
     return (
-        <BlogEditor blogIdForViewing={id} currentUser={currentUserForView} />
+        <div className="fade-in">
+            <BlogView currentUser={currentUserForView} />
+        </div>
     );
 };
 
@@ -79,6 +91,7 @@ function App() {
 
     const handleLoginSuccess = (userData) => {
         setCurrentUser(userData);
+        toast.success("Welcome back, " + userData.username + "!");
     };
 
     const handleLogout = () => {
@@ -88,7 +101,12 @@ function App() {
     };
 
     if (loadingAuth) {
-        return <div className="loading">Loading application...</div>;
+        return (
+            <div className="loading">
+                <div className="loading-spinner"></div>
+                <span>Loading application...</span>
+            </div>
+        );
     }
 
     return (
@@ -103,9 +121,10 @@ function App() {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
+                theme="colored"
             />
             <Navbar currentUser={currentUser} onLogout={handleLogout} />
-            <main>
+            <main className="fade-in">
                 <Routes>
                     <Route
                         path="/login"
@@ -163,16 +182,17 @@ function App() {
                         element={
                             <ProtectedRoute currentUser={currentUser}>
                                 <div className="container">
-                                    {" "}
-                                    {/* Added a container for better layout */}
-                                    <BlogList
-                                        listType="my-drafts"
-                                        currentUser={currentUser}
-                                    />
-                                    <BlogList
-                                        listType="my-published"
-                                        currentUser={currentUser}
-                                    />
+                                    <h2 className="page-title">My Blogs</h2>
+                                    <div className="blog-sections">
+                                        <BlogList
+                                            listType="my-drafts"
+                                            currentUser={currentUser}
+                                        />
+                                        <BlogList
+                                            listType="my-published"
+                                            currentUser={currentUser}
+                                        />
+                                    </div>
                                 </div>
                             </ProtectedRoute>
                         }

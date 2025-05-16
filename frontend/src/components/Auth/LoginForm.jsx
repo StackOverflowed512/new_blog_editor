@@ -45,9 +45,7 @@ const LoginForm = ({ onLoginSuccess }) => {
         <div className="auth-form fade-in">
             <div className="auth-form-header">
                 <h2 className="auth-form-title">Welcome Back</h2>
-                <p className="auth-form-subtitle">
-                    Sign in to continue to BlogWave
-                </p>
+                <p className="auth-form-subtitle">Sign in to continue to BlogWave</p>
             </div>
 
             {error && <div className="auth-form-error">{error}</div>}
@@ -92,8 +90,7 @@ const LoginForm = ({ onLoginSuccess }) => {
                 >
                     {loading ? (
                         <>
-                            <span className="loading-spinner small"></span>{" "}
-                            Signing in...
+                            <span className="loading-spinner small"></span> Signing in...
                         </>
                     ) : (
                         <>Sign In</>

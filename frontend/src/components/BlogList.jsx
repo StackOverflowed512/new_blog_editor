@@ -13,35 +13,32 @@ const BlogList = ({ listType, currentUser }) => {
             setLoading(true);
             try {
                 let params = {};
-
-                // Only attempt to filter by user_id if currentUser exists
-                if (listType === "my-drafts" && currentUser) {
-                    params = { status: "draft", user_id: currentUser.id };
-                } else if (listType === "my-published" && currentUser) {
-                    params = { status: "published", user_id: currentUser.id };
-                } else if (listType === "all") {
-                    params = { status: "published" };
-                }
-
-                const response = await getAllBlogs(params);
-                setBlogs(response.data);
-            } catch (error) {
-                console.error("Error fetching blogs:", error);
-                toast.error("Failed to load blogs. Please try again.");
-            } finally {
-                setLoading(false);
+            
+            // Only attempt to filter by user_id if currentUser exists
+            if (listType === "my-drafts" && currentUser) {
+                params = { status: "draft", user_id: currentUser.id };
+            } else if (listType === "my-published" && currentUser) {
+                params = { status: "published", user_id: currentUser.id };
+            } else if (listType === "all") {
+                params = { status: "published" };
             }
-        };
-
-        // Only fetch blogs if currentUser exists for my-drafts and my-published
-        if (
-            listType === "all" ||
-            ((listType === "my-drafts" || listType === "my-published") &&
-                currentUser)
-        ) {
-            fetchBlogs();
+            
+            const response = await getAllBlogs(params);
+            setBlogs(response.data);
+        } catch (error) {
+            console.error("Error fetching blogs:", error);
+            toast.error("Failed to load blogs. Please try again.");
+        } finally {
+            setLoading(false);
         }
-    }, [listType, currentUser]);
+    };
+
+    // Only fetch blogs if currentUser exists for my-drafts and my-published
+    if ((listType === "all") || 
+        ((listType === "my-drafts" || listType === "my-published") && currentUser)) {
+        fetchBlogs();
+    }
+}, [listType, currentUser]);
 
     const handleDelete = async (id, event) => {
         event.preventDefault();
@@ -119,21 +116,6 @@ const BlogList = ({ listType, currentUser }) => {
             : text;
     };
 
-    // Inside the return statement where the blog excerpt is rendered
-    const renderExcerpt = (content) => {
-        // Create a temporary div to parse HTML content
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = content;
-        
-        // Get text content and limit to a reasonable excerpt length
-        let textContent = tempDiv.textContent || tempDiv.innerText || '';
-        if (textContent.length > 150) {
-            textContent = textContent.substring(0, 150) + '...';
-        }
-        
-        return textContent;
-    };
-
     if (loading) {
         return (
             <div className="container">
@@ -174,12 +156,7 @@ const BlogList = ({ listType, currentUser }) => {
                     </div>
                 ) : (
                     blogs.map((blog) => (
-                        <div 
-                          key={blog.id} 
-                          className="blog-card" 
-                          onClick={() => navigate(`/blogs/${blog.id}`)}
-                          style={{ cursor: 'pointer' }}
-                        >
+                        <div key={blog.id} className="blog-card">
                             <div
                                 className="blog-card-image"
                                 style={{
@@ -198,10 +175,12 @@ const BlogList = ({ listType, currentUser }) => {
                             </div>
                             <div className="blog-card-content">
                                 <h3 className="blog-card-title">
-                                    {blog.title || "Untitled Blog"}
+                                    <Link to={`/blogs/${blog.id}`}>
+                                        {blog.title || "Untitled Blog"}
+                                    </Link>
                                 </h3>
                                 <p className="blog-card-excerpt">
-                                    {renderExcerpt(blog.content)}
+                                    {truncateText(blog.content, 120)}
                                 </p>
                                 <div className="blog-card-meta">
                                     <div className="blog-card-author">
@@ -234,18 +213,24 @@ const BlogList = ({ listType, currentUser }) => {
 
                                 {currentUser &&
                                     blog.user_id === currentUser.id && (
-                                        <div className="blog-card-actions" onClick={(e) => e.stopPropagation()}>
+                                        <div className="blog-card-actions">
                                             <button
                                                 className="blog-card-btn edit"
-                                                onClick={(e) => handleEdit(blog.id, e)}
+                                                onClick={(e) =>
+                                                    handleEdit(blog.id, e)
+                                                }
                                             >
-                                                <i className="fas fa-edit"></i> Edit
+                                                <i className="fas fa-edit"></i>{" "}
+                                                Edit
                                             </button>
                                             <button
                                                 className="blog-card-btn delete"
-                                                onClick={(e) => handleDelete(blog.id, e)}
+                                                onClick={(e) =>
+                                                    handleDelete(blog.id, e)
+                                                }
                                             >
-                                                <i className="fas fa-trash-alt"></i> Delete
+                                                <i className="fas fa-trash-alt"></i>{" "}
+                                                Delete
                                             </button>
                                         </div>
                                     )}

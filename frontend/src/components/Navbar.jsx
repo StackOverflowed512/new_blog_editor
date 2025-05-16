@@ -41,25 +41,14 @@ const Navbar = ({ currentUser, onLogout }) => {
                     BlogWave
                 </Link>
 
-                <div
-                    className="navbar-mobile-toggle"
-                    onClick={toggleMobileMenu}
-                >
-                    <i
-                        className={`fas ${
-                            mobileMenuOpen ? "fa-times" : "fa-bars"
-                        }`}
-                    ></i>
+                <div className="navbar-mobile-toggle" onClick={toggleMobileMenu}>
+                    <i className={`fas ${mobileMenuOpen ? "fa-times" : "fa-bars"}`}></i>
                 </div>
 
-                <div
-                    className={`navbar-links ${mobileMenuOpen ? "active" : ""}`}
-                >
+                <div className={`navbar-links ${mobileMenuOpen ? "active" : ""}`}>
                     <Link
                         to="/"
-                        className={`navbar-link ${
-                            location.pathname === "/" ? "active" : ""
-                        }`}
+                        className={`navbar-link ${location.pathname === "/" ? "active" : ""}`}
                     >
                         <i className="fas fa-home"></i> Home
                     </Link>
@@ -68,21 +57,13 @@ const Navbar = ({ currentUser, onLogout }) => {
                         <>
                             <Link
                                 to="/editor"
-                                className={`navbar-link ${
-                                    location.pathname === "/editor"
-                                        ? "active"
-                                        : ""
-                                }`}
+                                className={`navbar-link ${location.pathname === "/editor" ? "active" : ""}`}
                             >
                                 <i className="fas fa-edit"></i> New Blog
                             </Link>
                             <Link
                                 to="/my-blogs"
-                                className={`navbar-link ${
-                                    location.pathname === "/my-blogs"
-                                        ? "active"
-                                        : ""
-                                }`}
+                                className={`navbar-link ${location.pathname === "/my-blogs" ? "active" : ""}`}
                             >
                                 <i className="fas fa-book"></i> My Blogs
                             </Link>
@@ -90,15 +71,9 @@ const Navbar = ({ currentUser, onLogout }) => {
                                 <div className="navbar-user-avatar">
                                     {getInitials(currentUser.username)}
                                 </div>
-                                <div className="navbar-user-name">
-                                    {currentUser.username}
-                                </div>
-                                <button
-                                    onClick={onLogout}
-                                    className="btn btn-secondary"
-                                >
-                                    <i className="fas fa-sign-out-alt"></i>{" "}
-                                    Logout
+                                <div className="navbar-user-name">{currentUser.username}</div>
+                                <button onClick={onLogout} className="btn btn-secondary">
+                                    <i className="fas fa-sign-out-alt"></i> Logout
                                 </button>
                             </div>
                         </>
@@ -106,21 +81,13 @@ const Navbar = ({ currentUser, onLogout }) => {
                         <>
                             <Link
                                 to="/login"
-                                className={`navbar-link ${
-                                    location.pathname === "/login"
-                                        ? "active"
-                                        : ""
-                                }`}
+                                className={`navbar-link ${location.pathname === "/login" ? "active" : ""}`}
                             >
                                 <i className="fas fa-sign-in-alt"></i> Login
                             </Link>
                             <Link
                                 to="/register"
-                                className={`navbar-link ${
-                                    location.pathname === "/register"
-                                        ? "active"
-                                        : ""
-                                }`}
+                                className={`navbar-link ${location.pathname === "/register" ? "active" : ""}`}
                             >
                                 <i className="fas fa-user-plus"></i> Register
                             </Link>

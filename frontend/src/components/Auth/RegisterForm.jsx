@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../../services/api";
+import { register } from "../../services/api";
 import { toast } from "react-toastify";
 
-const LoginForm = ({ onLoginSuccess }) => {
+const RegisterForm = () => {
     const [formData, setFormData] = useState({
         username: "",
         password: "",
+        confirmPassword: "",
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -25,17 +26,25 @@ const LoginForm = ({ onLoginSuccess }) => {
         setLoading(true);
         setError("");
 
+        if (formData.password !== formData.confirmPassword) {
+            setError("Passwords do not match");
+            setLoading(false);
+            return;
+        }
+
         try {
-            const response = await login(formData);
-            localStorage.setItem("token", response.data.token);
-            onLoginSuccess(response.data.user);
-            navigate("/");
+            await register({
+                username: formData.username,
+                password: formData.password,
+            });
+            toast.success("Registration successful! Please log in.");
+            navigate("/login");
         } catch (err) {
             setError(
                 err.response?.data?.message ||
-                    "Login failed. Please check your credentials."
+                    "Registration failed. Please try again."
             );
-            toast.error("Login failed. Please check your credentials.");
+            toast.error("Registration failed. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -44,10 +53,8 @@ const LoginForm = ({ onLoginSuccess }) => {
     return (
         <div className="auth-form fade-in">
             <div className="auth-form-header">
-                <h2 className="auth-form-title">Welcome Back</h2>
-                <p className="auth-form-subtitle">
-                    Sign in to continue to BlogWave
-                </p>
+                <h2 className="auth-form-title">Create Account</h2>
+                <p className="auth-form-subtitle">Join the BlogWave community</p>
             </div>
 
             {error && <div className="auth-form-error">{error}</div>}
@@ -62,7 +69,7 @@ const LoginForm = ({ onLoginSuccess }) => {
                         id="username"
                         name="username"
                         className="auth-form-input"
-                        placeholder="Enter your username"
+                        placeholder="Choose a username"
                         value={formData.username}
                         onChange={handleChange}
                         required
@@ -78,8 +85,24 @@ const LoginForm = ({ onLoginSuccess }) => {
                         id="password"
                         name="password"
                         className="auth-form-input"
-                        placeholder="Enter your password"
+                        placeholder="Create a password"
                         value={formData.password}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+
+                <div className="auth-form-group">
+                    <label htmlFor="confirmPassword" className="auth-form-label">
+                        <i className="fas fa-check-circle"></i> Confirm Password
+                    </label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        className="auth-form-input"
+                        placeholder="Confirm your password"
+                        value={formData.confirmPassword}
                         onChange={handleChange}
                         required
                     />
@@ -92,23 +115,22 @@ const LoginForm = ({ onLoginSuccess }) => {
                 >
                     {loading ? (
                         <>
-                            <span className="loading-spinner small"></span>{" "}
-                            Signing in...
+                            <span className="loading-spinner small"></span> Creating Account...
                         </>
                     ) : (
-                        <>Sign In</>
+                        <>Create Account</>
                     )}
                 </button>
             </form>
 
             <div className="auth-form-footer">
-                Don't have an account?{" "}
-                <Link to="/register" className="auth-form-link">
-                    Sign up
+                Already have an account?{" "}
+                <Link to="/login" className="auth-form-link">
+                    Sign in
                 </Link>
             </div>
         </div>
     );
 };
 
-export default LoginForm;
+export default RegisterForm;
