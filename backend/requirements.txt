@@ -1,0 +1,7 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate  # Optional but good for schema changes
+Flask-CORS
+PyJWT          # For JWT
+Werkzeug       # For password hashing
+python-dotenv  # For .flaskenv
