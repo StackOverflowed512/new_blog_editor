@@ -13,32 +13,35 @@ const BlogList = ({ listType, currentUser }) => {
             setLoading(true);
             try {
                 let params = {};
-            
-            // Only attempt to filter by user_id if currentUser exists
-            if (listType === "my-drafts" && currentUser) {
-                params = { status: "draft", user_id: currentUser.id };
-            } else if (listType === "my-published" && currentUser) {
-                params = { status: "published", user_id: currentUser.id };
-            } else if (listType === "all") {
-                params = { status: "published" };
-            }
-            
-            const response = await getAllBlogs(params);
-            setBlogs(response.data);
-        } catch (error) {
-            console.error("Error fetching blogs:", error);
-            toast.error("Failed to load blogs. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
-    // Only fetch blogs if currentUser exists for my-drafts and my-published
-    if ((listType === "all") || 
-        ((listType === "my-drafts" || listType === "my-published") && currentUser)) {
-        fetchBlogs();
-    }
-}, [listType, currentUser]);
+                // Only attempt to filter by user_id if currentUser exists
+                if (listType === "my-drafts" && currentUser) {
+                    params = { status: "draft", user_id: currentUser.id };
+                } else if (listType === "my-published" && currentUser) {
+                    params = { status: "published", user_id: currentUser.id };
+                } else if (listType === "all") {
+                    params = { status: "published" };
+                }
+
+                const response = await getAllBlogs(params);
+                setBlogs(response.data);
+            } catch (error) {
+                console.error("Error fetching blogs:", error);
+                toast.error("Failed to load blogs. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        // Only fetch blogs if currentUser exists for my-drafts and my-published
+        if (
+            listType === "all" ||
+            ((listType === "my-drafts" || listType === "my-published") &&
+                currentUser)
+        ) {
+            fetchBlogs();
+        }
+    }, [listType, currentUser]);
 
     const handleDelete = async (id, event) => {
         event.preventDefault();
