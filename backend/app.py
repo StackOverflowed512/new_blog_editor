@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 import datetime # For JWT expiration delta
 
 # Relative imports, work because 'backend' is a package (due to __init__.py)
-from .database import init_db, db
-from .models import Blog, User
-from .auth import token_required, register_user, login_user
+from backend.database import init_db, db
+from backend.models import Blog, User
+from backend.auth import token_required, register_user, login_user
 
 # Load environment variables from .env or .flaskenv
 # This should be called early, before create_app if possible, or within it.
