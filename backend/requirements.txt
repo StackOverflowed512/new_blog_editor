@@ -5,3 +5,4 @@ Flask-CORS
 PyJWT          # For JWT
 Werkzeug       # For password hashing
 python-dotenv  # For .flaskenv
+gunicorn
